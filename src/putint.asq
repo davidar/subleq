@@ -91,19 +91,17 @@ putint:
     putint_leading0; inc putint_leading0 # leading0 = 1
     putint_loop:
         Z pos__:p10 putint_restore_pos # restore pos and return if *pos <= 0
-        pos:p10 putint_arg_x putint_nextpos # x -= *pos, goto nextpos if x <= 0
-        inc i # i++
+        pos:p10 putint_arg_x ?+6 # x -= *pos, skip next line if x <= 0
+        inc i; Z Z putint_loop # i++, goto loop
+        pos_:p10 Z; Z putint_arg_x; Z # x += *pos
+        inc pos; inc pos_; inc pos__ # pos++
+        # leading0 -= i, goto output if leading0 <= 0, else goto endoutput
+        i putint_leading0 putint_output; Z Z putint_endoutput
+        putint_output:
+            tmp; i Z; char_0 Z; Z tmp; tmp (-1) # output i + '0'
+        putint_endoutput:
+        i # i = 0
         Z Z putint_loop # goto loop
-        putint_nextpos:
-            pos_:p10 Z; Z putint_arg_x; Z # x += *pos
-            inc pos; inc pos_; inc pos__ # pos++
-            # leading0 -= i, goto output if leading0 <= 0, else goto endoutput
-            i putint_leading0 putint_output; Z Z putint_endoutput
-            putint_output:
-                tmp; i Z; char_0 Z; Z tmp; tmp (-1) # output i + '0'
-            putint_endoutput:
-            i # i = 0
-            Z Z putint_loop # goto loop
 putint_restore_pos:
     sub_10 pos; sub_10 pos_; sub_10 pos__ # return pos to original value
 putint_return:

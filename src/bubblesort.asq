@@ -41,29 +41,28 @@
 
 .bubblesort_arg_p:0
 bubblesort:
-    bubblesort_loop:
-        bubblesort_swapped # swapped = 0
-        # i = p
-        bubblesort_i; bubblesort_i_; bubblesort_arg_p Z;
-        Z bubblesort_i; Z bubblesort_i_; Z
-        # j = p+1
-        bubblesort_j; bubblesort_j_; bubblesort_j__; bubblesort_arg_p Z; dec Z;
-        Z bubblesort_j; Z bubblesort_j_; Z bubblesort_j__; Z
-        bubblesort_forloop:
-            a; bubblesort_i:0 Z; Z a; Z # a = *i
-            b; bubblesort_j:0 Z; Z b; Z # b = *j
-            # goto next if a-b <= 0 (a <= b), a -= b (a = *i - *j)
-            b a bubblesort_next
-            # swap *i and *j
-            a bubblesort_i_:0 # *i -= a (*i = *j)
-            a Z; Z bubblesort_j_:0; Z # *j += a (*j = *i)
-            inc bubblesort_swapped # swapped++
-            bubblesort_next:
-                inc bubblesort_i; inc bubblesort_i_ # i++
-                inc bubblesort_j; inc bubblesort_j_; inc bubblesort_j__ # j++
-                Z bubblesort_j__:0 bubblesort_endfor # goto endfor if *j <= 0
-                Z Z bubblesort_forloop # goto forloop
-        bubblesort_endfor:
-        Z bubblesort_swapped bubblesort_return # return if swapped <= 0
-        Z Z bubblesort_loop # goto loop
+    bubblesort_swapped # swapped = 0
+    # i = p
+    bubblesort_i; bubblesort_i_; bubblesort_arg_p Z;
+    Z bubblesort_i; Z bubblesort_i_; Z
+    # j = p+1
+    bubblesort_j; bubblesort_j_; bubblesort_j__; bubblesort_arg_p Z; dec Z;
+    Z bubblesort_j; Z bubblesort_j_; Z bubblesort_j__; Z
+    bubblesort_forloop:
+        a; bubblesort_i:0 Z; Z a; Z # a = *i
+        b; bubblesort_j:0 Z; Z b; Z # b = *j
+        # goto next if a-b <= 0 (a <= b), a -= b (a = *i - *j)
+        b a bubblesort_next
+        # swap *i and *j
+        a bubblesort_i_:0 # *i -= a (*i = *j)
+        a Z; Z bubblesort_j_:0; Z # *j += a (*j = *i)
+        inc bubblesort_swapped # swapped++
+        bubblesort_next:
+            inc bubblesort_i; inc bubblesort_i_ # i++
+            inc bubblesort_j; inc bubblesort_j_; inc bubblesort_j__ # j++
+            Z bubblesort_j__:0 bubblesort_endfor # goto endfor if *j <= 0
+            Z Z bubblesort_forloop # goto forloop
+    bubblesort_endfor:
+    Z bubblesort_swapped bubblesort_return # return if swapped <= 0
+    Z Z bubblesort # loop
 bubblesort_return: Z Z bubblesort_return_address:-1

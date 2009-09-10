@@ -1,5 +1,5 @@
 // This is emulator of SUBLEQ language. Run with no arguments to see usage.
-// Oleg Mazonka, 10 Nov 2006, 19 Jan 2009
+// Oleg Mazonka, 10 Nov 2006, 19 Jan 2009, 22 Sept 2009
 
 #include <iostream>
 #include <fstream>
@@ -119,7 +119,7 @@ int main(int ac, char *av[])
 		}
 		else
 		{
-			cerr<<"Sqrun: Unknown option ["<<s<<"]\n";
+			cerr<<"Unknown option ["<<s<<"]\n";
 			usage();
 			return 2;
 		}
@@ -153,15 +153,15 @@ int main(int ac, char *av[])
 
 			if( io_type == IOCHAR )
 			{
-				unsigned char c;
-				cin>>c;
-				x = c;
-				cout<<c<<flush;
+				char c;
+				cin.get(c);
+				x = (unsigned char)c;
+				if(cin) cout<<c<<flush;
 			}
 			else if( io_type == IOINT )
 			{
 				cin>>x;
-				cout<<x<<' '<<flush;
+				if(cin)cout<<x<<' '<<flush;
 			}
 
 			if( trace ) cout<<" \tinout "<<x<<' ';
@@ -173,11 +173,15 @@ int main(int ac, char *av[])
 			{
 				char c;
 				cin.get(c);
-				x = c;
+				x = (unsigned char)c;
 			}
 			else if( io_type == IOINT ) cin>>x;
 
-			mem[b] += x;
+			if(cin)
+				mem[b] += x;
+			else
+				mem[b] -= 1;
+
 			if( mem[b]<=0 ) ip=c;
 			if( trace ) cout<<" \tinput [b]="<<mem[b]<<" ip="<<ip<<' ';
 

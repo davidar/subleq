@@ -1,5 +1,5 @@
 // Usage: sqasm < file.in > file.out
-// Oleg Mazonka: 10 Nov 2006; 19,22 Jan 2009;
+// Oleg Mazonka: 10 Nov 2006; 19,22 Jan 2009; 10 Sept 2009
 
 #include <iostream>
 #include <string>
@@ -32,7 +32,7 @@ string int2str(int x, int pr=0)
 /* grammar
 program	:= list of intructions
 intruction := [.] list of items ( ';' | '\n' )
-item 	:= ( [label:]expression | [label:][[number]] )
+item 	:= [label:]expression
 label	:= id
 expression := ( term | term+expression | term-expression )
 term 	:= ( -term | (expression) | const | id )
@@ -54,7 +54,7 @@ string item::dump(bool extra)
 	string r;
 	if( extra ) r = int2str(addr)+":";
 	if( state==RES ) return r+int2str(i);
-	return r+ "#" +s;
+	return r+ string("#")+s;
 }
 
 struct instruction
@@ -81,9 +81,11 @@ map<string,int> unres;
 void eat()
 { 
 	while( pip<prog.size() && (isspace(prog[pip]) &&  prog[pip]!='\n') ) 
-	{
 		pip++; 
-	}
+
+	if( prog[pip] == '#' )
+		while( pip<prog.size() && prog[pip]!='\n' )
+			pip++;
 }
 void eatn(){ eat(); while(prog[pip] == '\n' ) { pip++; line++; eat(); } }
 
@@ -91,9 +93,12 @@ void eatn(){ eat(); while(prog[pip] == '\n' ) { pip++; line++; eat(); } }
 void getid(string &s)
 {
 	eat();
-	if( isalpha(prog[pip]) || prog[pip]=='_' || prog[pip]=='@' ) s+=prog[pip];
-	while( pip<prog.size() && 
-		( isalnum(prog[++pip]) || prog[pip]=='_' || prog[pip]=='@' ) ) s+=prog[pip];
+	if( isalpha(prog[pip]) || prog[pip]=='_' )
+	{
+	  s+=prog[pip];
+	  while( pip<prog.size() && 
+		( isalnum(prog[++pip]) || prog[pip]=='_' ) ) s+=prog[pip];
+	}
 }
 
 void getid(item& i)
@@ -121,10 +126,11 @@ char getChr(int chr=false)
 		  case '\\': return '\\';
 		  case '"': return '"';
 		  case '\'': return '\'';
+		  case '0': return '\0';
 		}
 	  }
 
-    cerr<<"Sqasm: Warning "<<line<<" unknown escape char '"<<prog[pip]<<"'\n";
+    cerr<<"Warning "<<line<<" unknown escape char '"<<prog[pip]<<"'\n";
     if(!chr) pip--;
     return prog[pip];
 }
@@ -137,7 +143,7 @@ bool getconst(item& i)
 	  i.i = (unsigned char)getChr(true);
 	  if( prog[++pip] != '\'' )
 	  {
-		cerr<<"Sqasm: Error "<<line<<" closing ' expected was '"<<prog[pip]<<"'\n";
+		cerr<<"Error "<<line<<" closing ' expected was '"<<prog[pip]<<"'\n";
 		error_status = __LINE__;
 		return false;
 	  }
@@ -181,7 +187,7 @@ void getterm(item& i)
 		getexpr(i);
 		if( prog[pip] != ')' )
 		{
-			cerr<<"Sqasm: Error "<<line<<" closing ) expected\n";
+			cerr<<"Error "<<line<<" closing ) expected\n";
 			error_status = __LINE__;
 		}
 		else pip++;
@@ -247,42 +253,6 @@ bool getlabel(string &s)
  return false;
 }
 
-bool getArray(item &i)
-{
-  static int j=0;
-
-  if( j==0 ) // start
-  {
-	sint mpip = pip;
-	item c;
-	++pip;
-	getconst(c);
-	if( c.i<1 )
-	{
-		cerr<<"Sqasm: Error "<<line<<" array must be > 0\n";
-		return false;
-	}
-
-	j=c.i+2;
-	pip = mpip;
-  }
-
-  if ( --j == 1 )
-  {
-	item c;
-	++pip;
-	getconst(c);
-	++pip;
-	j=0;
-	return false;
-  }
-
-  i.i = 0;
-  i.state = item::RES;
-  return true;
-
-}
-
 bool getStr(item &i)
 {
   static int j=0;
@@ -291,7 +261,7 @@ bool getStr(item &i)
 
   if( pip+j >=prog.size() )
   {
-	cerr<<"Sqasm: Error "<<line<<" string not closed\n";
+	cerr<<"Error "<<line<<" string not closed\n";
 	error_status = __LINE__;
 	pip += j;
 	return false;
@@ -328,16 +298,15 @@ begin:
 	if( pip>=prog.size() ) return false;
 	
 	string lab;
-	while( prog[pip] != '"' && prog[pip] != '\'' && getlabel(lab) )
+	if( getlabel(lab) )
 	{
 		if( lab2adr.find(lab) == lab2adr.end() )
 			lab2adr[lab] = addr;
 		else
 		{
-			cerr<<"Sqasm: Error "<<line<<": label "<<lab<<" was defined\n";
+			cerr<<"Error "<<line<<": label "<<lab<<" was defined\n";
 			error_status = __LINE__;
 		}
-		lab="";
 	}
 
 	eat();
@@ -347,13 +316,6 @@ begin:
 	{
 		if( getStr(i) ) return true;
 		addr--; // finished with string - try again
-		goto begin;
-	}
-
-	if( prog[pip] == '[' )
-	{
-		if( getArray(i) ) return true;
-		addr--; // finished with array - try again
 		goto begin;
 	}
 
@@ -418,7 +380,7 @@ void resolve(item &i)
 {
 	if( i.state==item::EMPTY )
 	{
-		cerr<<"Sqasm: Internal Error: empty item\n";
+		cerr<<"Internal Error: empty item\n";
 		error_status = __LINE__;
 		return;
 	}
@@ -460,8 +422,6 @@ int main()
 	{
 		string s;
 		getline(cin,s);
-		string::size_type i = s.find("#");
-		if( i!=string::npos && s[i-1] != '\'' ) s = s.substr(0,i);
 		prog += s+'\n';
 		if( !cin ) break;
 	}
@@ -478,9 +438,9 @@ int main()
 
 	if( unres.size() )
 	{
-	   cerr<<"Sqasm: Warning: unresolved symbols: ";
+	   cerr<<"Warning: unresolved symbols: ";
 	   for( map<string,int>::iterator i=unres.begin(); i!=unres.end(); i++ )
-	   cerr<<" {"<<i->first<<":"<<i->second<<"}";
+	   cerr<<" ["<<i->first<<":"<<i->second<<"]";
 	   cerr<<'\n';
 	}
 }
