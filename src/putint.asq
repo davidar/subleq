@@ -1,0 +1,110 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# Output the given int x. This code assumes a 32-bit number representation is
+# being used. If this is not the case then p10 will need to be modified such
+# that p10[0] is the largest power of 10 which can be represented.
+
+# void putint(int x) {
+#     const int p10[] = {1000000000, 100000000, 10000000, 1000000, 100000,
+#                        10000, 1000, 100, 10, 1, 0};
+#     int *pos = p10;
+#     int i;
+#     int leading0 = 1;
+#     
+#     if(x <= 0) {
+#         if(x >= 0) {
+#             putchar('0');
+#             return;
+#         } else {
+#             putchar('-');
+#             x = -x;
+#         }
+#     }
+#     
+#     i = 0;
+#     leading0 = 1;
+#     x++;
+#     while(1) {
+#         if(*pos <= 0) return;
+#         x -= *pos;
+#         if(x <= 0) {
+#             x += *pos;
+#             pos++;
+#             leading0 -= i;
+#             if(leading0 <= 0)
+#                 putchar('0' + i);
+#             i = 0;
+#             continue;
+#         }
+#         i++;
+#     }
+# }
+
+# The reason x is incremented before printing is that it is a lot simpler to
+# check if x <= 0 than x < 0. Since we don't care about the actual value of x
+# in the while loop, just how many times we need to subtract a power of 10
+# before it becomes negative, it is easier to just shift the number line:
+#     if x' = x+1, then x < 0 is the same as x' <= 0.
+
+# 0-terminated list of powers of 10
+.p10:1000000000 100000000 10000000 1000000 100000 10000 1000 100 10 1 0
+# leading0 == 1 => only leading 0s have been encountered so far
+# leading0 <= 0 => something other than a 0 has already been printed
+# used to determine whether to print the current character, as we don't
+# want to print leading 0s
+.putint_leading0:0
+
+.putint_arg_x:0
+putint:
+    # goto x_leq_0 if x <= 0, else goto x_gt_0
+    Z putint_arg_x putint_x_leq_0; Z Z putint_x_gt_0
+    putint_x_leq_0:
+        tmp; putint_arg_x tmp putint_x_eq_0 # goto x_eq_0 if x >= 0 (x == 0)
+        char_minus (-1) # output '-'
+        tmp; putint_arg_x Z; Z tmp; Z; putint_arg_x; tmp putint_arg_x # x = -x
+        Z Z putint_x_gt_0 # goto x_gt_0
+    putint_x_eq_0:
+        char_0 (-1) # output '0'
+        Z Z putint_return # return
+    putint_x_gt_0:
+    
+    inc putint_arg_x # x++
+    i # i = 0
+    putint_leading0; inc putint_leading0 # leading0 = 1
+    putint_loop:
+        Z pos__:p10 putint_restore_pos # restore pos and return if *pos <= 0
+        pos:p10 putint_arg_x putint_nextpos # x -= *pos, goto nextpos if x <= 0
+        inc i # i++
+        Z Z putint_loop # goto loop
+        putint_nextpos:
+            pos_:p10 Z; Z putint_arg_x; Z # x += *pos
+            inc pos; inc pos_; inc pos__ # pos++
+            # leading0 -= i, goto output if leading0 <= 0, else goto endoutput
+            i putint_leading0 putint_output; Z Z putint_endoutput
+            putint_output:
+                tmp; i Z; char_0 Z; Z tmp; tmp (-1) # output i + '0'
+            putint_endoutput:
+            i # i = 0
+            Z Z putint_loop # goto loop
+putint_restore_pos:
+    sub_10 pos; sub_10 pos_; sub_10 pos__ # return pos to original value
+putint_return:
+    Z Z putint_return_address:-1

@@ -1,0 +1,190 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# A menu presented to the user for interacting with the program.
+
+.string_menu:-? "\nMenu\n"
+.               "1) Bubblesort\n"
+.               "2) Calculator\n"
+.               "3) Factorial\n"
+.               "4) Primes\n"
+.               "5) Halt\n"
+.               "> "
+.            0
+main:
+    # puts(string_menu)
+    puts_arg_s; string_menu puts_arg_s
+    puts_return_address; ?+5 puts_return_address
+    Z Z puts;.-?
+    
+    # x = getint()
+    getint_return_address; ?+5 getint_return_address
+    Z Z getint;.-?
+    x; getint_return_value Z; Z x; Z
+    
+    Z x main               # <= 0
+    dec x menu_bubblesort  # 1
+    dec x menu_calc        # 2
+    dec x menu_factorial   # 3
+    dec x menu_primes      # 4
+    dec x (-1)             # 5
+    Z Z main               # >= 6
+
+.string_bubblesort_a:-? "\nBubblesort\nEnter a string:\n" 0
+.string_bubblesort_b:-? "Sorting according to ASCII codes...\n" 0
+menu_bubblesort:
+    # puts(string_bubblesort_a)
+    puts_arg_s; string_bubblesort_a puts_arg_s
+    puts_return_address; ?+5 puts_return_address
+    Z Z puts;.-?
+    
+    # gets()
+    gets_return_address; ?+5 gets_return_address
+    Z Z gets;.-?
+    
+    # puts(string_bubblesort_b)
+    puts_arg_s; string_bubblesort_b puts_arg_s
+    puts_return_address; ?+5 puts_return_address
+    Z Z puts;.-?
+    
+    # bubblesort(buffer)
+    bubblesort_arg_p; buffer bubblesort_arg_p
+    bubblesort_return_address; ?+5 bubblesort_return_address
+    Z Z bubblesort;.-?
+    
+    # puts(buffer)
+    puts_arg_s; buffer puts_arg_s
+    puts_return_address; ?+5 puts_return_address
+    Z Z puts;.-?
+    
+    # putchar('\n')
+    char_nl (-1)
+    
+    Z Z main
+
+.string_calc:-? "\nCalculator\nEnter an expression of the form\n"
+.               "xOPy\n"
+.               "where OP is one of:\n"
+.               "+ (add)\n"
+.               "- (subtract)\n"
+.               "* (multiply)\n"
+.               "/ (divide)\n"
+.               "Enter a blank line to exit calculator prompt.\n"
+.            0
+menu_calc:
+    # puts(string_calc)
+    puts_arg_s; string_calc puts_arg_s
+    puts_return_address; ?+5 puts_return_address
+    Z Z puts;.-?
+    
+    menu_calc_prompt:
+    
+    # puts("> ")
+    char_gt (-1); char_spc (-1)
+    
+    # x = -getint(); o = -getint_delim
+    getint_return_address; ?+5 getint_return_address
+    Z Z getint;.-?
+    x; getint_return_value x
+    o; getint_delim o
+    
+    # goto main if -o <= ' '
+    p; o p; char_spc p main
+    
+    # y = -getint()
+    getint_return_address; ?+5 getint_return_address
+    Z Z getint;.-?
+    y; getint_return_value y
+    
+    # z = -calc(-x, -y, -o)
+    calc_arg_x;  x calc_arg_x
+    calc_arg_y;  y calc_arg_y
+    calc_arg_op; o calc_arg_op
+    calc_return_address; ?+5 calc_return_address
+    Z Z calc;.-?
+    z; calc_return_value z
+    
+    # puts("= ")
+    char_eq (-1); char_spc (-1)
+    
+    # putint(-z)
+    putint_arg_x; z putint_arg_x
+    putint_return_address; ?+5 putint_return_address
+    Z Z putint;.-?
+    
+    # putchar('\n')
+    char_nl (-1)
+    
+    Z Z menu_calc_prompt
+
+.string_factorial:-? "\nFactorial\nEnter a number between 1 and 12: " 0
+menu_factorial:
+    # puts(string_factorial)
+    puts_arg_s; string_factorial puts_arg_s
+    puts_return_address; ?+5 puts_return_address
+    Z Z puts;.-?
+    
+    # x = -getint()
+    getint_return_address; ?+5 getint_return_address
+    Z Z getint;.-?
+    x; getint_return_value x
+    
+    # putint(-x)
+    putint_arg_x; x putint_arg_x
+    putint_return_address; ?+5 putint_return_address
+    Z Z putint;.-?
+    
+    # putchar('!')
+    char_bang (-1)
+    
+    # x = -factorial(x)
+    factorial_arg_n; x factorial_arg_n
+    factorial_return_address; ?+5 factorial_return_address
+    Z Z factorial;.-?
+    x; factorial_return_value x
+    
+    # puts(" = ")
+    char_spc (-1); char_eq (-1); char_spc (-1)
+    
+    # putint(-x)
+    putint_arg_x; x putint_arg_x
+    putint_return_address; ?+5 putint_return_address
+    Z Z putint;.-?
+    
+    # putchar('\n')
+    char_nl (-1)
+
+    Z Z main
+
+.string_primes:-? "\nPrimes\n" 0
+menu_primes:
+    # puts(string_primes)
+    puts_arg_s; string_primes puts_arg_s
+    puts_return_address; ?+5 puts_return_address
+    Z Z puts;.-?
+    
+    # primes()
+    primes_return_address; ?+5 primes_return_address
+    Z Z primes;.-?
+    
+    # putchar('\n')
+    char_nl (-1)
+
+    Z Z main

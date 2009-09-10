@@ -1,0 +1,58 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# Calculate n! for n > 0.
+
+# int factorial(int n) {
+#     int a, b, r;
+#     r = 0;
+#     a = n--;
+#     while(1) {
+#         b = n;
+#         while(1) {
+#             r -= a; b--;
+#             if(b <= 0) {
+#                 if(--n <= 0)
+#                     return -r;
+#                 a = -r; r = 0;
+#                 break;
+#             }
+#         }
+#     }
+# }
+
+.factorial_arg_n:0
+factorial:
+    r # r = 0
+    a; factorial_arg_n Z; Z a; Z; dec factorial_arg_n # a = n--
+    factorial_loop:
+        b; factorial_arg_n Z; Z b # b = n
+        factorial_multiply: # r = -a*b
+            a r # r -= a
+            # b--, goto b_leq_0 if b <= 0, else goto multiply
+            dec b b_leq_0; Z Z factorial_multiply
+            b_leq_0:
+                dec factorial_arg_n factorial_return # return if --n <= 0
+                a; r a; r # a = -r, r = 0
+                Z Z factorial_loop # goto loop
+factorial_return:
+    factorial_return_value; r factorial_return_value # return -r
+    Z Z factorial_return_address:-1
+.factorial_return_value:0

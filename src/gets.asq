@@ -1,0 +1,59 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# Read a newline-terminated string from input, storing it in buffer. The
+# trailing newline is replaced with the null character. buffer is assumed to be
+# of unlimited size. Null characters are ignored.
+
+# char buffer[...];
+# void gets() {
+#     int c, k, p;
+#     p = buffer;
+#     while(1) {
+#         c = getchar();
+#         if(c <= 0) continue;
+#         *p = 0;
+#         k = c;
+#         if(k <= '\n') {
+#             k -= '\n';
+#             if(k >= 0) return;
+#         }
+#         *p += c;
+#         p++;
+#     }
+# }
+
+gets:
+    # p = buffer
+    gets_p; gets_p_; gets_p__; buffer gets_p; buffer gets_p_; buffer gets_p__
+    gets_loop:
+        c; (-1) c # input to c
+        Z c gets_loop # goto loop if c <= 0
+        gets_p:0 gets_p_:0 # *p = 0
+        k; c Z; Z k; Z # k = c
+        char_nl k gets_k_leq_nl # goto k_leq_nl if k <= '\n', k -= '\n'
+        Z Z gets_store # else goto store
+        gets_k_leq_nl:
+            tmp; k tmp gets_return # return if k >= 0
+        gets_store:
+            c Z; Z gets_p__:0; Z # *p += c
+            inc gets_p; inc gets_p_; inc gets_p__ # p++
+            Z Z gets_loop # goto loop
+gets_return: Z Z gets_return_address:-1

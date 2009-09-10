@@ -1,0 +1,125 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# Commonly used ASCII characters.
+
+.char_bel:7
+.char_bkspc:8
+.char_htab:9
+.char_nl:'\n'
+.char_vtab:11
+.char_ff:12
+.char_cr:13
+
+.char_spc:' '
+.char_bang:'!'
+.char_quot:'\"'
+.char_hash:'#'
+.char_dollar:'$'
+.char_percent:'%'
+.char_amp:'&'
+.char_apos:'\''
+.char_lparen:'('
+.char_rparen:')'
+.char_star:'*'
+.char_plus:'+'
+.char_comma:','
+.char_minus:'-'
+.char_dot:'.'
+.char_slash:'/'
+.char_0:'0'
+.char_1:'1'
+.char_2:'2'
+.char_3:'3'
+.char_4:'4'
+.char_5:'5'
+.char_6:'6'
+.char_7:'7'
+.char_8:'8'
+.char_9:'9'
+.char_colon:':'
+.char_semicolon:';'
+.char_lt:'<'
+.char_eq:'='
+.char_gt:'>'
+.char_query:'?'
+.char_at:'@'
+.char_A:'A'
+.char_B:'B'
+.char_C:'C'
+.char_D:'D'
+.char_E:'E'
+.char_F:'F'
+.char_G:'G'
+.char_H:'H'
+.char_I:'I'
+.char_J:'J'
+.char_K:'K'
+.char_L:'L'
+.char_M:'M'
+.char_N:'N'
+.char_O:'O'
+.char_P:'P'
+.char_Q:'Q'
+.char_R:'R'
+.char_S:'S'
+.char_T:'T'
+.char_U:'U'
+.char_V:'V'
+.char_W:'W'
+.char_X:'X'
+.char_Y:'Y'
+.char_Z:'Z'
+.char_lbracket:'['
+.char_bslash:'\\'
+.char_rbracket:']'
+.char_hat:'^'
+.char_underscore:'_'
+.char_backtick:'`'
+.char_a:'a'
+.char_b:'b'
+.char_c:'c'
+.char_d:'d'
+.char_e:'e'
+.char_f:'f'
+.char_g:'g'
+.char_h:'h'
+.char_i:'i'
+.char_j:'j'
+.char_k:'k'
+.char_l:'l'
+.char_m:'m'
+.char_n:'n'
+.char_o:'o'
+.char_p:'p'
+.char_q:'q'
+.char_r:'r'
+.char_s:'s'
+.char_t:'t'
+.char_u:'u'
+.char_v:'v'
+.char_w:'w'
+.char_x:'x'
+.char_y:'y'
+.char_z:'z'
+.char_lbrace:'{'
+.char_pipe:'|'
+.char_rbrace:'}'
+.char_tilde:'~'

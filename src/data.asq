@@ -1,0 +1,40 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# tmp is used for a similar purpose to Z, except without the guarantee that it
+# is returned to 0 after compound instructions
+.tmp:0
+
+# general purpose variables for use within subroutines
+.a:0 b:0 c:0 d:0 e:0 f:0 g:0 h:0 i:0 j:0 k:0 l:0 m:0
+.n:0 o:0 p:0 q:0 r:0 s:0 t:0 u:0 v:0 w:0 x:0 y:0 z:0
+
+# sub_n x => x -= n
+.sub_2:2 sub_3:3 sub_4:4 sub_5:5 sub_6:6 sub_7:7 sub_8:8 sub_9:9
+.sub_10:10 sub_11:11 sub_12:12 sub_13:13 sub_14:14 sub_15:15 sub_16:16
+
+# add_n x => x += n
+.add_2:-2 add_3:-3 add_4:-4 add_5:-5 add_6:-6 add_7:-7 add_8:-8 add_9:-9
+.add_10:-10 add_11:-11 add_12:-12 add_13:-13 add_14:-14 add_15:-15 add_16:-16
+
+# string buffer
+# this line must be the final one in the program as the buffer is assumed to
+# extend to the end of memory
+.buffer:-?

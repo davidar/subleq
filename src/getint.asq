@@ -1,0 +1,64 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# Read an int from input. The first character following the int is also
+# consumed, and is stored in delim. Null characters are ignored.
+
+# char delim;
+# int getint() {
+#     int a, b, c, r;
+#     r = 0;
+#     while(1) {
+#         c = getchar();
+#         if(c <= 0) continue;
+#         if(c < '0') return -r;
+#         c -= '0';
+#         if(c >= 10) return -r;
+#         a = -r;
+#         b = 10;
+#         while(1) {
+#             if(--b <= 0) break;
+#             r -= a;
+#         }
+#         r -= c;
+#     }
+# }
+
+getint:
+    r # r = 0
+    getint_loop:
+        c; (-1) c # input to c
+        Z c getint_loop # goto loop if c <= 0
+        char_slash c getint_return; dec c # return if c < '0', c -= '0'
+        tmp; add_10 tmp; c tmp getint_return # return if c >= 10
+        a; b; r a; add_10 b # a = -r, b = 10
+        getint_multiply:
+            dec b getint_end_multiply # b--, goto end_multiply if b <= 0
+            a r # r -= a
+            Z Z getint_multiply # goto multiply
+        getint_end_multiply:
+        c r # r -= c
+        Z Z getint_loop # goto loop
+getint_return:
+    getint_delim; char_slash Z; c Z; Z getint_delim; Z # delim = c + '/'
+    getint_return_value; r getint_return_value # return -r
+    Z Z getint_return_address:-1
+.getint_return_value:0
+.getint_delim:0

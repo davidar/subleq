@@ -1,0 +1,81 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# Generates (and prints) a list of primes, up to the largest prime that is able
+# to be represented. In the case of a 32-bit signed number representation, this
+# number happens to be 2^31-1, the eighth Mersenne prime.
+
+# void primes() {
+#     int p, q, x;
+#     p = 2;
+#     putint(p); putchar(' ');
+#     while(1) {
+#         candidate_loop:
+#         if(++p <= 0) return;
+#         q = 1;
+#         while(1) {
+#             q++;
+#             x = p;
+#             if(x <= q) {
+#                 putint(p); putchar(' ');
+#                 if(getchar() > 0) return;
+#                 break;
+#             }
+#             while(1) {
+#                 x -= q;
+#                 if(x <= 0) {
+#                     if(x >= 0)
+#                         goto candidate_loop;
+#                     else
+#                         break;
+#                 }
+#             }
+#         }
+#     }
+# }
+
+# p = candidate prime
+# q = candidate divisor
+primes:
+    p; add_2 p # p = 2
+    primes_print:
+        # putint(p)
+        putint_arg_x; p Z; Z putint_arg_x
+        putint_return_address; ?+5 putint_return_address
+        Z Z putint;.-?
+        # putchar(' ')
+        char_spc (-1)
+        # goto candidate_loop if getchar() <= 0, else return
+        #tmp; IN tmp primes_candidate_loop; Z Z primes_return
+    primes_candidate_loop:
+        inc p # p++
+        Z p primes_return # return if p <= 0
+        q; inc q # q = 1
+        primes_divisor_loop:
+            inc q # q++
+            x; p Z; Z x; Z # x = p
+            q x primes_print # goto print if x <= q, x -= q
+            primes_sub_loop:
+                # x -= q, goto x_leq_0 if x <= 0, else goto sub_loop
+                q x primes_x_leq_0; Z Z primes_sub_loop
+            primes_x_leq_0:
+                # goto candidate_loop if x >= 0, else goto divisor_loop
+                tmp; x tmp primes_candidate_loop; Z Z primes_divisor_loop
+primes_return: Z Z primes_return_address:-1

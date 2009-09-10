@@ -1,0 +1,73 @@
+# Copyright (c) 2009 David Roberts <d@vidr.cc>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# Perform the calculation specified by op on x and y.
+
+# int calc(int x, int y, char op) {
+#     int r;
+#     r = 0;
+#     if(op == '+') {
+#         r -= x+y;
+#     } else if(op == '-') {
+#         r -= x-y;
+#     } else if(op == '*') {
+#         do
+#             r -= x;
+#         while(--y > 0);
+#     } else if(op == '/') {
+#         if(y > 0) {
+#             x++;
+#             while((x -= y) > 0)
+#                 r--;
+#         }
+#     }
+#     return -r;
+# }
+
+.calc_arg_x:0
+.calc_arg_y:0
+.calc_arg_op:0
+calc:
+    r # r = 0
+    char_star calc_arg_op calc_times  # '*'
+    dec       calc_arg_op calc_plus   # '+'
+    sub_2     calc_arg_op calc_minus  # '-'
+    sub_2     calc_arg_op calc_div    # '/'
+    Z Z calc_return # return
+    calc_plus:
+        calc_arg_x r; calc_arg_y r # r -= x+y
+        Z Z calc_return # return
+    calc_minus:
+        calc_arg_x r; calc_arg_y Z; Z r; Z # r -= x-y
+        Z Z calc_return # return
+    calc_times:
+        calc_arg_x r # r -= x
+        # return if --y <= 0, else goto times
+        dec calc_arg_y calc_return; Z Z calc_times
+    calc_div:
+        Z calc_arg_y calc_return # return if y <= 0
+        inc calc_arg_x # x++
+        calc_div_loop:
+            calc_arg_y calc_arg_x calc_return # x -= y, return if x <= 0
+            dec r calc_div_loop # r--, goto div_loop
+calc_return:
+    calc_return_value; r calc_return_value # return -r
+    Z Z calc_return_address:-1
+.calc_return_value:0
