@@ -87,8 +87,7 @@ To simulate the CPU:
 9) repeat from step 3 if necessary
 
 LIBRARIES/DEMO
-Libraries for programs written in SUBLEQ assembly, as accepted by the slightly
-modified version of sqasm[6] provided in the thirdparty/ directory, are
+Libraries for programs written in SUBLEQ assembly, as accepted by sqasm[6], are
 available in the src/ directory.
 
 They provide several common functions:
@@ -117,8 +116,7 @@ A very minimal (only 222 bytes in size) SUBLEQ interpreter (sq.c) written in C
 is available in the src/ directory. It has been somewhat obfuscated to reduce
 the code size, so a more readable version is also provided (src/sq.orig.c).
 
-It should function similarly to the slightly modified version of sqrun[6]
-provided in the thirdparty/ directory. See the comment at the top of
+It should function similarly to sqrun[6]. See the comment at the top of
 src/sq.orig.c for usage information.
 
 [1] http://en.wikipedia.org/wiki/Subleq
