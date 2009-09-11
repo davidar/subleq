@@ -1,5 +1,5 @@
 // Usage: sqasm < file.in > file.out
-// Oleg Mazonka: 10 Nov 2006; 19,22 Jan 2009; 10 Sept 2009
+// Oleg Mazonka: 10 Nov 2006; 22 Jan 2009; 11 Sept 2009
 
 #include <iostream>
 #include <string>
@@ -66,7 +66,7 @@ struct instruction
 string instruction::dump(bool extra)
 {
 	string r;
-	for( int i=0; i<items.size(); i++ ) r += items[i].dump(extra) + ' ';
+	for( size_t i=0; i<items.size(); i++ ) r += items[i].dump(extra) + ' ';
 	return r;
 }
 
@@ -298,7 +298,7 @@ begin:
 	if( pip>=prog.size() ) return false;
 	
 	string lab;
-	if( getlabel(lab) )
+	while( getlabel(lab) )
 	{
 		if( lab2adr.find(lab) == lab2adr.end() )
 			lab2adr[lab] = addr;
@@ -307,6 +307,7 @@ begin:
 			cerr<<"Error "<<line<<": label "<<lab<<" was defined\n";
 			error_status = __LINE__;
 		}
+		lab="";
 	}
 
 	eat();
@@ -404,13 +405,13 @@ void resolve(item &i)
 
 void resolve(instruction &n)
 {
-  for( int i=0; i<n.items.size(); i++ )
+  for( size_t i=0; i<n.items.size(); i++ )
   resolve(n.items[i]);
 }
 
 void resolve(vector<instruction> &pr)
 {
-  for( int i=0; i<pr.size(); i++ )
+  for( size_t i=0; i<pr.size(); i++ )
   {
 	resolve(pr[i]);
   }
@@ -430,7 +431,7 @@ int main()
 
 	if( error_status ) return error_status;
 	
-	for( int i=0; i<pr.size(); i++ )
+	for( size_t i=0; i<pr.size(); i++ )
 	{
 		resolve(pr[i]);
 		cout<<pr[i].dump()<<"\n";
