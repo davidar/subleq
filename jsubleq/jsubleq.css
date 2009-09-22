@@ -22,7 +22,7 @@
     margin-left: -1px;
 }
 
-#jsubleqterminal span, input {
+#jsubleqterminal span, #jsubleqterminal input {
     color: white;
     font-family: monospace;
     font-size: 1em;
