@@ -14,11 +14,12 @@ Indirect addressing (pointers) can be emulated through self-modifying code,
 where operations are performed on the instructions themselves.
 See [1,2,3,4,6] for further information.
 
-This project consists of three main parts:
+This project consists of four main parts:
 - a CPU capable of executing SUBLEQ instructions
 - libraries for programs written in SUBLEQ assembly, and a demo program to
   demonstrate these
 - a minimal SUBLEQ interpreter (with I/O) written in C
+- JSubleq: a SUBLEQ interpreter written in JavaScript
 
 CPU
 Schematics for a SUBLEQ-based CPU are provided in the logisim/ directory. A
@@ -118,6 +119,10 @@ the code size, so a more readable version is also provided (src/sq.orig.c).
 
 It should function similarly to sqrun[6]. See the comment at the top of
 src/sq.orig.c for usage information.
+
+JSUBLEQ
+The JSubleq interpreter can be used by navigating a web browser to
+jsubleq/jsubleq.html
 
 [1] http://en.wikipedia.org/wiki/Subleq
 [2] http://esolangs.org/wiki/Subleq

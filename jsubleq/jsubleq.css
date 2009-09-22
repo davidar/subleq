@@ -1,0 +1,30 @@
+#jsubleqterminal {
+    display: block;
+    overflow: auto;
+    padding: 0;
+    height: 100%;
+    background-color: black;
+}
+
+#jsubleqform {
+    padding: 0;
+    margin: 0;
+    display: inline;
+}
+
+#jsubleqinput {
+    width: 50%;
+    border: none;
+    outline: none;
+    background-color: black;
+    padding: 0;
+    margin: 0;
+    margin-left: -1px;
+}
+
+#jsubleqterminal span, input {
+    color: white;
+    font-family: monospace;
+    font-size: 1em;
+    line-height: 1.3em;
+}
